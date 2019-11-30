@@ -60,4 +60,22 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:all) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:all) do
+    DatabaseCleaner.clean
+  end
+
+# 上記の設定をしていないと、この先、テストを実行していく中で、すでにテスト用のデータベースにデータが存在しているため、
+# テスト用のデータを作成できないというエラーに直面することがあるからです。
+
+# before do ~endの中などにデータ作成のコードが書かれていればその枠内のテスト終了後にデータが消えてくれるので上記の設定をする必要はないのですが、
+# それ以外の節内にデータ作成の記述があるとデータがテスト用のデータベースに残存してしまうことがあるため、
+# それを消去するために'database_cleaner'を導入しています。
 end
